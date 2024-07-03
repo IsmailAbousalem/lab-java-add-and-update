@@ -1,12 +1,13 @@
 package com.IntroToSpring.Lab402IntroToSpringBoot.controller.impl;
 
 import com.IntroToSpring.Lab402IntroToSpringBoot.model.Employee;
+import com.IntroToSpring.Lab402IntroToSpringBoot.model.Patient;
 import com.IntroToSpring.Lab402IntroToSpringBoot.repository.EmployeeRepository;
+import com.IntroToSpring.Lab402IntroToSpringBoot.service.impl.EmployeeService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -18,24 +19,52 @@ public class EmployeeController {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    @Autowired
+    EmployeeService employeeService;
+
+    //    ********************************************* GET *********************************************
+
     @GetMapping("/employees")
     public List<Employee> getAllDoctors() {
-        return employeeRepository.findAll();
+        return employeeService.getAllEmployees();
     }
 
     @GetMapping("/employees/{id}")
     public Optional<Employee> getDoctorById(@PathVariable Long id) {
-        return employeeRepository.findById(id);
+        return employeeService.getEmployeeById(id);
     }
 
     @GetMapping("/employees/status/{status}")
     public List<Employee> getDoctorsByStatus(@PathVariable String status) {
-        return employeeRepository.findByStatus(status);
+        return employeeService.getEmployeesByStatus(status);
     }
 
     @GetMapping("/employees/department/{department}")
     public List<Employee> getDoctorsByDepartment(@PathVariable String department) {
-        return employeeRepository.findByDepartment(department);
+        return employeeService.getEmployeesByDepartment(department);
     }
+
+    //    ********************************************* POST *********************************************
+
+    @PostMapping("/employees")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void saveEmployee(@RequestBody @Valid Employee employee) {
+        employeeService.saveEmployee(employee);
+    }
+
+    //    ********************************************* PUT *********************************************
+
+    @PutMapping("/employees/{id}/status")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateEmployeeStatus(@PathVariable Long id, @RequestParam String status) {
+        employeeService.updateEmployeeStatus(id, status);
+    }
+
+    @PutMapping("/employees/{id}/department")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void updateEmployeeDepartment(@PathVariable Long id, @RequestParam String department) {
+        employeeService.updateEmployeeDepartment(id, department);
+    }
+
 
 }
